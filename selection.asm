@@ -17,7 +17,7 @@ InnerLoop:
     mov ax, num[si - 2]
     mov bx, num[si]
     cmp ax, bx
-    jnb NextIteration
+    jnb NextIteration; jb for ascending & jnb for descending
 
     mov num[si - 2], bx
     mov num[si], ax
