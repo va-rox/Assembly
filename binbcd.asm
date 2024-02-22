@@ -1,32 +1,41 @@
 .model small
 .data
-    bin dw 0FFh ; binary value to convert
-    bcd dw 0000h ; BCD result
-
+    bin_ip db 7fh
+    bcd_op db ?
 .code
     mov ax, @data
     mov ds, ax
+    xor bl, bl
+    xor cl, cl
 
-    mov ax, bin ; load binary value into ax
-    mov cx, 16  ; set loop counter to 16 (for 16-bit binary)
+    mov al, bin_ip
+L2: 
+    sub al, 64h
+    jnc L4
+    add al, 64h
 
-convert:
-    shl ax, 1   ; shift left ax (binary value)
-    rcl dx, 1   ; rotate left dx (BCD value)
-    cmp dl, 50 ; if lower byte of dx >= 50
-    jb next     ; jump if below
-    add dl, 03 ; else add 3
-next:
-    cmp dh, 50 ; if higher byte of dx >= 50
-    jb loop1     ; jump if below
-    add dh, 03 ; else add 3
-loop1:
-    loop convert ; repeat for all bits
+L3: 
+    sub al, 0ah
+    jnc L5
+    add al, 0ah
 
-    mov bcd, dx ; store result in bcd
+    lea si, bcd_op
+    mov [si], cl
+    inc si
+    mov [si], bl
+    inc si
+    mov [si], al
 
-    mov ah, 04ch
-    ret
+L1: 
+    mov ah, 4ch
     int 21h
-end
 
+L4: 
+    inc cl
+    jmp L2
+
+L5: 
+    inc bl
+    jmp L3
+
+end
